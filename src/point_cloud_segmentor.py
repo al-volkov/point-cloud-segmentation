@@ -2,7 +2,6 @@ from itertools import chain
 
 import numpy as np
 import open3d as o3d
-from open3d.geometry import PointCloud
 from scipy.stats import mode
 from tabulate import tabulate
 from tqdm import tqdm

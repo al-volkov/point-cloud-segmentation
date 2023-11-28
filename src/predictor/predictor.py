@@ -11,7 +11,7 @@ class Predictor:
     def __init__(
         self,
         image_loader: Union[ImageLoader, LazyImageLoader],
-        sem_seg_inferencer: "PanopticDeepLabSegmentor",
+        sem_seg_inferencer,
     ) -> None:
         self.image_loader = image_loader
         self.sem_seg_inferencer = sem_seg_inferencer
