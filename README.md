@@ -18,6 +18,9 @@ git clone https://github.com/al-volkov/point-cloud-segmentation.git
 conda env create -f environment.yml
 conda activate point-cloud-segmentation
 ```
+If you plan to perform semantic segmentation on the fly, then you will need to install the appropriate dependencies for the library of your choice:
+* [Detectron2](https://detectron2.readthedocs.io/en/latest/tutorials/install.html)
+* [MMSegmentation](https://mmsegmentation.readthedocs.io/en/latest/get_started.html)
 2 **Configure**
     
 You should create `.yaml` config with parameters.
