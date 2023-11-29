@@ -1,6 +1,9 @@
 import unittest
+
 import numpy as np
+
 from src.point_projector.point_projector_core import PointProjectorCore
+
 
 class TestPointProjectorCore(unittest.TestCase):
     def setUp(self):
@@ -9,10 +12,7 @@ class TestPointProjectorCore(unittest.TestCase):
         self.vertical_offset = 0
         self.apply_scale = False
         self.point_projector = PointProjectorCore(
-            self.image_width,
-            self.image_height,
-            self.vertical_offset,
-            self.apply_scale
+            self.image_width, self.image_height, self.vertical_offset, self.apply_scale
         )
         self.point_coordinates = np.array([1, 2, 3])
         self.camera_coordinates = np.array([1, 1, 1])
@@ -32,7 +32,9 @@ class TestPointProjectorCore(unittest.TestCase):
 
     def test_rotate_vector(self):
         vector_coordinates = np.array([1, 2, 3])
-        rotated_vectors = self.point_projector.rotate_vector(vector_coordinates, self.camera_angles)
+        rotated_vectors = self.point_projector.rotate_vector(
+            vector_coordinates, self.camera_angles
+        )
         self.assertIsInstance(rotated_vectors, np.ndarray)
 
     def test_get_rotation_matrix(self):
@@ -41,7 +43,9 @@ class TestPointProjectorCore(unittest.TestCase):
 
     def test_convert_to_spherical_coordinates(self):
         vector_coordinates = np.array([1, 2, 3])
-        spherical_coordinates = self.point_projector.convert_to_spherical_coordinates(vector_coordinates)
+        spherical_coordinates = self.point_projector.convert_to_spherical_coordinates(
+            vector_coordinates
+        )
         self.assertIsInstance(spherical_coordinates, np.ndarray)
 
     def test_spherical_to_equirectangular(self):
@@ -49,6 +53,7 @@ class TestPointProjectorCore(unittest.TestCase):
         phi = 0.5
         coordinates = self.point_projector.spherical_to_equirectangular(theta, phi)
         self.assertIsInstance(coordinates, np.ndarray)
+
 
 if __name__ == "__main__":
     unittest.main()

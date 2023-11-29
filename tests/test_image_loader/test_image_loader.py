@@ -1,18 +1,22 @@
+import os
 import unittest
+
 import numpy as np
+
 from src.image_loader.image_loader import ImageLoader
 
-import os
 
 class TestImageLoader(unittest.TestCase):
     def setUp(self):
-        self.test_dir = os.path.join("tests", "data", "image_dir") 
+        self.test_dir = os.path.join("tests", "data", "image_dir")
         self.image_loader = ImageLoader(self.test_dir)
 
     def test_init(self):
         self.assertEqual(self.image_loader.image_dir, self.test_dir)
         self.assertIsInstance(self.image_loader.images, list)
-        self.assertTrue(all(isinstance(i, np.ndarray) for i in self.image_loader.images))
+        self.assertTrue(
+            all(isinstance(i, np.ndarray) for i in self.image_loader.images)
+        )
 
     def test_get_image(self):
         test_index = 0

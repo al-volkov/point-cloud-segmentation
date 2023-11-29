@@ -1,9 +1,11 @@
+import os
 import unittest
-import numpy as np
 from unittest.mock import Mock
+
+import numpy as np
+
 from src.predictor.from_memory_predictor import FromMemoryPredictor
 
-import os
 
 class TestFromMemoryPredictor(unittest.TestCase):
     def setUp(self):
@@ -41,10 +43,10 @@ class TestFromMemoryPredictor(unittest.TestCase):
             "bicycle",
         ]
         self.assertEqual(classes, expected_classes)
-    
+
     def test_file_not_found_error(self):
         with self.assertRaises(FileNotFoundError):
-            FromMemoryPredictor(self.image_loader, 'non_existent_file.npy')
+            FromMemoryPredictor(self.image_loader, "non_existent_file.npy")
 
     def test_predict(self):
         index = 0
@@ -58,7 +60,9 @@ class TestFromMemoryPredictor(unittest.TestCase):
 
     def tearDown(self):
         import os
+
         os.remove(self.predictions_path)
+
 
 if __name__ == "__main__":
     unittest.main()

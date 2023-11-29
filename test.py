@@ -1,12 +1,11 @@
 import argparse
 import os
-from typing import Any, Dict, Union
+from typing import Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import open3d as o3d
 import pandas as pd
-import yaml
 from scipy.spatial import cKDTree
 
 from src.image_loader.image_loader import ImageLoader
@@ -16,8 +15,6 @@ from src.predictor.from_memory_predictor import FromMemoryPredictor
 from src.predictor.lazy_predictor import LazyPredictor
 from src.predictor.predictor import Predictor
 from src.utils.read_config import read_config
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

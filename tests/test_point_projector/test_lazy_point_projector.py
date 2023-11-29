@@ -1,6 +1,9 @@
 import unittest
+
 import numpy as np
+
 from src.point_projector.lazy_point_projector import LazyPointProjector
+
 
 class TestLazyPointProjector(unittest.TestCase):
     def setUp(self):
@@ -16,13 +19,18 @@ class TestLazyPointProjector(unittest.TestCase):
             self.vertical_offset,
             self.points,
             self.camera_coordinates,
-            self.camera_angles
+            self.camera_angles,
         )
 
     def test_init(self):
         np.testing.assert_array_equal(self.lazy_point_projector.points, self.points)
-        np.testing.assert_array_equal(self.lazy_point_projector.camera_coordinates, self.camera_coordinates)
-        np.testing.assert_array_equal(self.lazy_point_projector.camera_angles, self.camera_angles)
+        np.testing.assert_array_equal(
+            self.lazy_point_projector.camera_coordinates, self.camera_coordinates
+        )
+        np.testing.assert_array_equal(
+            self.lazy_point_projector.camera_angles, self.camera_angles
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

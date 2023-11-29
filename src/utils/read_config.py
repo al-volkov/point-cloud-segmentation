@@ -1,5 +1,7 @@
+from typing import Any, Dict
+
 import yaml
-from typing import Dict, Any
+
 
 def read_config(config_path: str) -> Dict[str, Any]:
     try:

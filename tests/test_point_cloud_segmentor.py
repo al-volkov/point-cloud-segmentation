@@ -1,7 +1,10 @@
 import unittest
-import numpy as np
 from unittest.mock import Mock
+
+import numpy as np
+
 from src.point_cloud_segmentor import PointCloudSegmentor
+
 
 class TestPointCloudSegmentor(unittest.TestCase):
     def setUp(self):
@@ -35,7 +38,9 @@ class TestPointCloudSegmentor(unittest.TestCase):
         self.assertEqual(self.segmentor.image_width, self.image_width)
         self.assertEqual(self.segmentor.image_height, self.image_height)
         self.assertEqual(self.segmentor.vertical_offset, self.vertical_offset)
-        self.assertTrue((self.segmentor.camera_coordinates == self.camera_coordinates).all())
+        self.assertTrue(
+            (self.segmentor.camera_coordinates == self.camera_coordinates).all()
+        )
         self.assertTrue((self.segmentor.camera_angles == self.camera_angles).all())
         self.assertEqual(self.segmentor.predictor, self.predictor)
         self.assertTrue((self.segmentor.closest_images == self.closest_images).all())
@@ -44,6 +49,7 @@ class TestPointCloudSegmentor(unittest.TestCase):
     def test_evaluate(self):
         predicted_labels = np.array([0, 1, 2])
         self.segmentor.evaluate(predicted_labels)
+
 
 if __name__ == "__main__":
     unittest.main()

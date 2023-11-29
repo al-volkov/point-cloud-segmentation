@@ -15,9 +15,7 @@ class FromMemoryPredictor:
         try:
             self.predictions = np.load(predictions_path).transpose((0, 2, 1))
         except FileNotFoundError:
-            raise FileNotFoundError(
-                f"Predictions file {predictions_path} not found."
-            )
+            raise FileNotFoundError(f"Predictions file {predictions_path} not found.")
 
     def get_classes(self):
         return [

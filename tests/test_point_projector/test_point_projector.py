@@ -1,6 +1,9 @@
 import unittest
+
 import numpy as np
+
 from src.point_projector.point_projector import PointProjector
+
 
 class TestPointProjector(unittest.TestCase):
     def setUp(self):
@@ -19,7 +22,7 @@ class TestPointProjector(unittest.TestCase):
             self.points,
             self.camera_coordinates,
             self.camera_angles,
-            vectorized=True
+            vectorized=True,
         )
         self.assertIsInstance(point_projector.projected_points, np.ndarray)
 
@@ -31,12 +34,13 @@ class TestPointProjector(unittest.TestCase):
             self.points,
             self.camera_coordinates,
             self.camera_angles,
-            vectorized=False
+            vectorized=False,
         )
         projected_points = point_projector.project_all(
             self.points, self.camera_coordinates, self.camera_angles
         )
         self.assertIsInstance(projected_points, np.ndarray)
+
 
 if __name__ == "__main__":
     unittest.main()
