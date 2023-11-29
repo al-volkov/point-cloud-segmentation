@@ -4,8 +4,9 @@ import numpy as np
 from tqdm import tqdm
 
 from src.point_projector.point_projector_core import PointProjectorCore
-from src.point_projector.point_projector_core_vectorized import \
-    PointProjectorCoreVectorized
+from src.point_projector.point_projector_core_vectorized import (
+    PointProjectorCoreVectorized,
+)
 
 
 class PointProjector:
