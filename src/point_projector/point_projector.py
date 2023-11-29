@@ -1,10 +1,11 @@
+from typing import Optional, Union
+
 import numpy as np
 from tqdm import tqdm
 
 from src.point_projector.point_projector_core import PointProjectorCore
-from src.point_projector.point_projector_core_vectorized import (
-    PointProjectorCoreVectorized,
-)
+from src.point_projector.point_projector_core_vectorized import \
+    PointProjectorCoreVectorized
 
 
 class PointProjector:
@@ -14,7 +15,6 @@ class PointProjector:
         "camera_coordinates",
         "camera_angles",
         "projected_points",
-        "vectorized",
         "valid_projection_mask",
     )
 
@@ -28,11 +28,10 @@ class PointProjector:
         camera_angles: np.ndarray,
         vectorized=True,
     ) -> None:
-        self.vectorized = vectorized
         if not vectorized:
-            self.projector = PointProjectorCore(
-                image_width, image_height, vertical_offset
-            )
+            self.projector: Union[
+                PointProjectorCore, PointProjectorCoreVectorized
+            ] = PointProjectorCore(image_width, image_height, vertical_offset)
             self.points = np.asarray(points)
             self.camera_coordinates = camera_coordinates
             self.camera_angles = camera_angles
@@ -48,7 +47,7 @@ class PointProjector:
             )
             self.projected_points = self.projector.project_on_image(
                 np.asarray(points), camera_coordinates, camera_angles
-            )
+            ).astype(np.int16)
 
     def project_all(
         self,
@@ -72,7 +71,7 @@ class PointProjector:
                     projected_points[i, j] = projection
         return projected_points
 
-    def project(self, point_index: int, image_index: int) -> np.ndarray:
+    def project(self, point_index: int, image_index: int) -> Optional[np.ndarray]:
         projection = self.projected_points[point_index, image_index]
         if projection[0] != -1:
             return projection

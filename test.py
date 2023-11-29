@@ -1,6 +1,6 @@
 import argparse
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,7 +17,7 @@ from src.predictor.lazy_predictor import LazyPredictor
 from src.predictor.predictor import Predictor
 
 
-def read_config(config_path: str) -> Optional[Dict[str, Any]]:
+def read_config(config_path: str) -> Dict[str, Any]:
     try:
         with open(config_path, "r") as config_file:
             config = yaml.safe_load(config_file)
@@ -54,7 +54,9 @@ if __name__ == "__main__":
         )
 
     if config["images"]["read_all"]:
-        image_loader = ImageLoader(config["images"]["image_dir"])
+        image_loader: Union[ImageLoader, LazyImageLoader] = ImageLoader(
+            config["images"]["image_dir"]
+        )
     else:
         image_loader = LazyImageLoader(config["images"]["image_dir"])
 
@@ -66,20 +68,20 @@ if __name__ == "__main__":
                 for image_path in image_loader.image_names
             )
         ]
-        camera_coordinates = reference.loc[:, "projectedX[m]":"projectedZ[m]"].values
-        camera_angles = reference.loc[:, "roll[deg]":"heading[deg]"].values
+        camera_coordinates = reference.loc[:, "projectedX[m]":"projectedZ[m]"].values  # type: ignore
+        camera_angles = reference.loc[:, "roll[deg]":"heading[deg]"].values  # type: ignore
     except FileNotFoundError:
         raise FileNotFoundError(
             f"Error: Reference file not found at '{config['reference_path']}'"
         )
 
     if config["predictor"]["type"] == "memory":
-        predictor = FromMemoryPredictor(
-            image_loader, config["predictor"]["predictions_path"]
-        )
+        predictor: Union[
+            Predictor, FromMemoryPredictor, LazyPredictor
+        ] = FromMemoryPredictor(image_loader, config["predictor"]["predictions_path"])
     elif config["predictor"]["type"] == "precompute":
         sem_seg_inferencer = None
-        predictor = Predictor(image_loader, sem_seg_inferencer)
+        predictor = Predictor(image_loader, sem_seg_inferencer)  # type: ignore
     elif config["predictor"]["type"] == "lazy":
         sem_seg_inferencer = None
         predictor = LazyPredictor(image_loader, sem_seg_inferencer)
@@ -116,6 +118,6 @@ if __name__ == "__main__":
     if args.display:
         predicted_labels += 3
         num_labels = np.unique(predicted_labels).shape[0]
-        colors = plt.get_cmap("tab10")(predicted_labels / num_labels)[:, :3]
+        colors = plt.set_cmap("tab10")(predicted_labels / num_labels)[:, :3]
         point_cloud.colors = o3d.utility.Vector3dVector(colors)
         o3d.visualization.draw_geometries([point_cloud])

@@ -18,7 +18,13 @@ class PointProjectorCoreVectorized:
         "start_y",
     )
 
-    def __init__(self, image_width, image_height, vertical_offset, apply_scale=False):
+    def __init__(
+        self,
+        image_width: int,
+        image_height: int,
+        vertical_offset: int,
+        apply_scale=False,
+    ):
         self.image_width = image_width
         self.image_height = image_height
         self.vertical_offset = vertical_offset
@@ -26,13 +32,18 @@ class PointProjectorCoreVectorized:
         self.start_x = (self.absolute_width - image_width) // 2
         self.start_y = (self.absolute_height - image_height) // 2 + vertical_offset
 
-    def project_on_image(self, point_coordinates, camera_coordinates, camera_angles):
+    def project_on_image(
+        self,
+        point_coordinates: np.ndarray,
+        camera_coordinates: np.ndarray,
+        camera_angles: np.ndarray,
+    ) -> np.ndarray:
         coordinates_on_original_image = self._project_on_original_image(
             point_coordinates, camera_coordinates, camera_angles
         )
         return self.convert_coordinates(coordinates_on_original_image)
 
-    def convert_coordinates(self, original_coordinates):
+    def convert_coordinates(self, original_coordinates: np.ndarray) -> np.ndarray:
         new_x = original_coordinates[..., 0] - self.start_x
         new_y = original_coordinates[..., 1] - self.start_y
 
@@ -48,8 +59,11 @@ class PointProjectorCoreVectorized:
         return converted_coordinates
 
     def _project_on_original_image(
-        self, point_coordinates, camera_coordinates, camera_angles
-    ):
+        self,
+        point_coordinates: np.ndarray,
+        camera_coordinates: np.ndarray,
+        camera_angles: np.ndarray,
+    ) -> np.ndarray:
         point_coordinates = point_coordinates[:, np.newaxis, :]
         camera_coordinates = camera_coordinates[np.newaxis, :, :]
         adjusted_camera_angles = camera_angles.copy()
@@ -69,14 +83,16 @@ class PointProjectorCoreVectorized:
         coordinates_on_image = self.spherical_to_equirectangular(theta, phi)  # x, y
         return coordinates_on_image
 
-    def rotate_vector(self, vector_coordinates, camera_angles):
+    def rotate_vector(
+        self, vector_coordinates: np.ndarray, camera_angles: np.ndarray
+    ) -> np.ndarray:
         rotation_matrices = self.get_rotation_matrix(camera_angles)
         rotated_vectors = np.einsum(
             "ijl,jkl->ijk", vector_coordinates, rotation_matrices
         )
         return rotated_vectors
 
-    def get_rotation_matrix(self, camera_angles):
+    def get_rotation_matrix(self, camera_angles: np.ndarray) -> np.ndarray:
         camera_angles = np.radians(camera_angles)
         roll = camera_angles[0, :, 0]
         pitch = camera_angles[0, :, 1]
@@ -117,7 +133,9 @@ class PointProjectorCoreVectorized:
         # print(f"Rotation matrix shape = {R.shape}")
         return R
 
-    def convert_to_spherical_coordinates(self, vector_coordinates):
+    def convert_to_spherical_coordinates(
+        self, vector_coordinates: np.ndarray
+    ) -> np.ndarray:
         x = vector_coordinates[..., 0]
         y = vector_coordinates[..., 1]
         z = vector_coordinates[..., 2]
@@ -130,9 +148,11 @@ class PointProjectorCoreVectorized:
 
         return np.stack((r, theta, phi), axis=-1)
 
-    def spherical_to_equirectangular(self, theta, phi, img_width=8000, img_height=4000):
-        x = (-theta + np.pi) * img_width / (2 * np.pi)
-        y = (np.pi - phi) * img_height / np.pi
+    def spherical_to_equirectangular(
+        self, theta: np.ndarray, phi: np.ndarray
+    ) -> np.ndarray:
+        x = (-theta + np.pi) * self.absolute_width / (2 * np.pi)
+        y = (np.pi - phi) * self.absolute_height / np.pi
 
         x = np.round(x).astype(np.int16)
         y = np.round(y).astype(np.int16)
