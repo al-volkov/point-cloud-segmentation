@@ -1,6 +1,3 @@
-import glob
-import os
-
 import numpy as np
 from mmseg.apis import MMSegInferencer
 
