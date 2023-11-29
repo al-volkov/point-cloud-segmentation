@@ -25,3 +25,6 @@ jobs:
 
     - name: Run Mypy
       run: mypy . --explicit-package-bases
+
+    - name: Run Tests
+      run: pytest

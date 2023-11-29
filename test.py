@@ -15,15 +15,8 @@ from src.point_cloud_segmentor import PointCloudSegmentor
 from src.predictor.from_memory_predictor import FromMemoryPredictor
 from src.predictor.lazy_predictor import LazyPredictor
 from src.predictor.predictor import Predictor
+from src.utils.read_config import read_config
 
-
-def read_config(config_path: str) -> Dict[str, Any]:
-    try:
-        with open(config_path, "r") as config_file:
-            config = yaml.safe_load(config_file)
-        return config
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Error: Config file not found at '{config_path}'")
 
 
 if __name__ == "__main__":

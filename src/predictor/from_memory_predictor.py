@@ -12,7 +12,12 @@ class FromMemoryPredictor:
         self, image_loader: Union[ImageLoader, LazyImageLoader], predictions_path: str
     ) -> None:
         self.image_loader = image_loader
-        self.predictions = np.load(predictions_path).transpose((0, 2, 1))
+        try:
+            self.predictions = np.load(predictions_path).transpose((0, 2, 1))
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Predictions file {predictions_path} not found."
+            )
 
     def get_classes(self):
         return [
