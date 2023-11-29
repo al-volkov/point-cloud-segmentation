@@ -8,9 +8,7 @@ from src.image_loader.lazy_image_loader import LazyImageLoader
 
 class LazyPredictor:
     def __init__(
-        self,
-        image_loader: Union[ImageLoader, LazyImageLoader],
-        sem_seg_inferencer
+        self, image_loader: Union[ImageLoader, LazyImageLoader], sem_seg_inferencer
     ) -> None:
         self.image_loader = image_loader
         self.sem_seg_inferencer = sem_seg_inferencer

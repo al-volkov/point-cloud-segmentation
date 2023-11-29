@@ -32,7 +32,6 @@ class PointCloudSegmentor:
         self.camera_coordinates = camera_coordinates
         self.camera_angles = camera_angles
         self.predictor = predictor
-        self.classes = self.predictor.get_classes()
         self.closest_images = closest_images
         self.true_labels = true_labels
 
