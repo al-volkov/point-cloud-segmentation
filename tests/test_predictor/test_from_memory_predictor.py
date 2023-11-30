@@ -55,7 +55,7 @@ class TestFromMemoryPredictor(unittest.TestCase):
 
     def test_predict_multiple(self):
         indices = np.array([0, 1, 2])
-        predictions = self.predictor.predict_mulitple(indices)
+        predictions = self.predictor.predict_multiple(indices)
         self.assertTrue((predictions == self.predictions[indices]).all())
 
     def tearDown(self):

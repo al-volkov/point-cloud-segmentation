@@ -40,7 +40,8 @@ if __name__ == "__main__":
         true_labels -= 1
     except KeyError:
         raise FileNotFoundError(
-            f"Point cloud file at '{config['point_cloud_path']}' does not contain labels"
+            f"Point cloud file at '{config['point_cloud_path']}'\
+                does not contain labels"
         )
 
     if config["images"]["read_all"]:
@@ -51,15 +52,17 @@ if __name__ == "__main__":
         image_loader = LazyImageLoader(config["images"]["image_dir"])
 
     try:
-        reference = pd.read_csv(config["reference_path"], sep="\t")
-        reference = reference[
-            reference["file_name"].isin(
+        r = pd.read_csv(config["reference_path"], sep="\t")
+        r = r[
+            r["file_name"].isin(
                 os.path.splitext(os.path.basename(image_path))[0]
                 for image_path in image_loader.image_names
             )
         ]
-        camera_coordinates = reference.loc[:, "projectedX[m]":"projectedZ[m]"].values  # type: ignore
-        camera_angles = reference.loc[:, "roll[deg]":"heading[deg]"].values  # type: ignore
+        camera_coord_col = r.loc[:, "projectedX[m]":"projectedZ[m]"]  # type: ignore
+        camera_angles_col = r.loc[:, "roll[deg]":"heading[deg]"]  # type: ignore
+        camera_coordinates = camera_coord_col.values
+        camera_angles = camera_angles_col.values
     except FileNotFoundError:
         raise FileNotFoundError(
             f"Error: Reference file not found at '{config['reference_path']}'"

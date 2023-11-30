@@ -2,6 +2,25 @@ import numpy as np
 
 
 class PointProjectorCoreVectorized:
+    """
+    A class that represents a vectorized point projector for image projection.
+
+    Attributes:
+        absolute_width (int): The absolute width of the image.
+        absolute_height (int): The absolute height of the image.
+        x_scale (float): The scale factor for the x-coordinate.
+        y_scale (float): The scale factor for the y-coordinate.
+        z_scale (float): The scale factor for the z-coordinate.
+        scale (np.ndarray): The scale factors as a numpy array.
+
+    Args:
+        image_width (int): The width of the image.
+        image_height (int): The height of the image.
+        vertical_offset (int): The vertical offset of the image.
+        apply_scale (bool, optional): Flag indicating whether\
+            to apply scaling. Defaults to False.
+    """
+
     absolute_width = 8000
     absolute_height = 4000
     x_scale = 0.9997720449
@@ -38,12 +57,32 @@ class PointProjectorCoreVectorized:
         camera_coordinates: np.ndarray,
         camera_angles: np.ndarray,
     ) -> np.ndarray:
+        """
+        Projects the given point coordinates onto the image.
+
+        Args:
+            point_coordinates (np.ndarray): The coordinates of the points.
+            camera_coordinates (np.ndarray): The coordinates of the camera.
+            camera_angles (np.ndarray): The angles of the camera.
+
+        Returns:
+            np.ndarray: The projected coordinates on the image.
+        """
         coordinates_on_original_image = self._project_on_original_image(
             point_coordinates, camera_coordinates, camera_angles
         )
         return self.convert_coordinates(coordinates_on_original_image)
 
     def convert_coordinates(self, original_coordinates: np.ndarray) -> np.ndarray:
+        """
+        Converts the original coordinates to the image coordinates.
+
+        Args:
+            original_coordinates (np.ndarray): The original coordinates.
+
+        Returns:
+            np.ndarray: The converted coordinates.
+        """
         new_x = original_coordinates[..., 0] - self.start_x
         new_y = original_coordinates[..., 1] - self.start_y
 
@@ -64,6 +103,17 @@ class PointProjectorCoreVectorized:
         camera_coordinates: np.ndarray,
         camera_angles: np.ndarray,
     ) -> np.ndarray:
+        """
+        Projects the point coordinates onto the original image.
+
+        Args:
+            point_coordinates (np.ndarray): The coordinates of the points.
+            camera_coordinates (np.ndarray): The coordinates of the camera.
+            camera_angles (np.ndarray): The angles of the camera.
+
+        Returns:
+            np.ndarray: The projected coordinates on the original image.
+        """
         point_coordinates = point_coordinates[:, np.newaxis, :]
         camera_coordinates = camera_coordinates[np.newaxis, :, :]
         adjusted_camera_angles = camera_angles.copy()
@@ -86,6 +136,16 @@ class PointProjectorCoreVectorized:
     def rotate_vector(
         self, vector_coordinates: np.ndarray, camera_angles: np.ndarray
     ) -> np.ndarray:
+        """
+        Rotates the vector coordinates based on the camera angles.
+
+        Args:
+            vector_coordinates (np.ndarray): The vector coordinates.
+            camera_angles (np.ndarray): The camera angles.
+
+        Returns:
+            np.ndarray: The rotated vector coordinates.
+        """
         rotation_matrices = self.get_rotation_matrix(camera_angles)
         rotated_vectors = np.einsum(
             "ijl,jkl->ijk", vector_coordinates, rotation_matrices
@@ -93,6 +153,15 @@ class PointProjectorCoreVectorized:
         return rotated_vectors
 
     def get_rotation_matrix(self, camera_angles: np.ndarray) -> np.ndarray:
+        """
+        Calculates the rotation matrix based on the camera angles.
+
+        Args:
+            camera_angles (np.ndarray): The camera angles.
+
+        Returns:
+            np.ndarray: The rotation matrix.
+        """
         camera_angles = np.radians(camera_angles)
         roll = camera_angles[0, :, 0]
         pitch = camera_angles[0, :, 1]
@@ -130,12 +199,20 @@ class PointProjectorCoreVectorized:
 
         # Combine the rotations
         R = R_yaw @ R_pitch @ R_roll
-        # print(f"Rotation matrix shape = {R.shape}")
         return R
 
     def convert_to_spherical_coordinates(
         self, vector_coordinates: np.ndarray
     ) -> np.ndarray:
+        """
+        Converts the vector coordinates to spherical coordinates.
+
+        Args:
+            vector_coordinates (np.ndarray): The vector coordinates.
+
+        Returns:
+            np.ndarray: The spherical coordinates.
+        """
         x = vector_coordinates[..., 0]
         y = vector_coordinates[..., 1]
         z = vector_coordinates[..., 2]
@@ -151,6 +228,16 @@ class PointProjectorCoreVectorized:
     def spherical_to_equirectangular(
         self, theta: np.ndarray, phi: np.ndarray
     ) -> np.ndarray:
+        """
+        Converts the spherical coordinates to equirectangular coordinates.
+
+        Args:
+            theta (np.ndarray): The theta values.
+            phi (np.ndarray): The phi values.
+
+        Returns:
+            np.ndarray: The equirectangular coordinates.
+        """
         x = (-theta + np.pi) * self.absolute_width / (2 * np.pi)
         y = (np.pi - phi) * self.absolute_height / np.pi
 

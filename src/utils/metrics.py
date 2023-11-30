@@ -1,17 +1,26 @@
 import numpy as np
 
 
-def map_pole(array):
-    array[array == 6] = 5
-    array[array == 7] = 5
-    return array
-
-
 def calculate_metrics(true_labels, predicted_labels):
-    mean_accuraccy, accuracies = calculate_accuracy(true_labels, predicted_labels)
+    """
+    Calculate various metrics for evaluating the performance of a segmentation model.
+
+    Args:
+        true_labels (numpy.ndarray): Array of true labels.
+        predicted_labels (numpy.ndarray): Array of predicted labels.
+
+    Returns:
+        dict: A dictionary containing the calculated metrics.
+            - mean_accuracy (float): Mean accuracy.
+            - mean_iou (float): Mean intersection over union.
+            - accuracies (numpy.ndarray): Array of accuracies for each class.
+            - ious (numpy.ndarray):\
+                Array of intersection over union values for each class.
+    """
+    mean_accuracy, accuracies = calculate_accuracy(true_labels, predicted_labels)
     mean_iou, ious = calculate_iou(true_labels, predicted_labels)
     return {
-        "mean_accuracy": mean_accuraccy,
+        "mean_accuracy": mean_accuracy,
         "mean_iou": mean_iou,
         "accuracies": accuracies,
         "ious": ious,
@@ -19,6 +28,17 @@ def calculate_metrics(true_labels, predicted_labels):
 
 
 def calculate_iou(true_labels, predicted_labels):
+    """
+    Calculates the Intersection over Union (IoU) metric for semantic segmentation.
+
+    Args:
+        true_labels (numpy.ndarray): Array of true labels.
+        predicted_labels (numpy.ndarray): Array of predicted labels.
+
+    Returns:
+        float: Mean IoU value.
+        numpy.ndarray: Array of IoU values for each label.
+    """
     max_label = 18  # labels from -1 to 18
     confusion_matrix = np.zeros((max_label + 2, max_label + 2), dtype=np.int64)
     ious = np.zeros(max_label + 2)
@@ -47,6 +67,18 @@ def calculate_iou(true_labels, predicted_labels):
 
 
 def calculate_accuracy(true_labels, predicted_labels):
+    """
+    Calculate the mean accuracy and individual accuracies\
+        for a given set of true labels and predicted labels.
+
+    Parameters:
+    true_labels (numpy.ndarray): Array of true labels.
+    predicted_labels (numpy.ndarray): Array of predicted labels.
+
+    Returns:
+    mean_accuracy (float): Mean accuracy calculated from the individual accuracies.
+    accuracies (numpy.ndarray): Array of individual accuracies for each label.
+    """
     max_label = 18
     confusion_matrix = np.zeros((max_label + 2, max_label + 2), dtype=np.int64)
     accuracies = np.zeros(max_label + 2)

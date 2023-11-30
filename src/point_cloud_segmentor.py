@@ -11,6 +11,40 @@ from src.utils.metrics import calculate_metrics
 
 
 class PointCloudSegmentor:
+    """
+    Class for segmenting a point cloud using a combination of image-based\
+        predictions and point cloud projections.
+
+    Args:
+        point_cloud (o3d.geometry.PointCloud): The input point cloud.
+        camera_coordinates (np.ndarray): The camera coordinates.
+        camera_angles (np.ndarray): The camera angles.
+        image_loader: The image loader object.
+        image_width (int): The width of the images.
+        image_height (int): The height of the images.
+        vertical_offset (int): The vertical offset.
+        predictor: The predictor object for image-based predictions.
+        closest_images: The closest images for each point in the point cloud.
+        true_labels (Optional): The true labels for the point cloud (default: None).
+
+    Attributes:
+        point_cloud (o3d.geometry.PointCloud): The input point cloud.
+        image_loader: The image loader object.
+        image_width (int): The width of the images.
+        image_height (int): The height of the images.
+        vertical_offset (int): The vertical offset.
+        camera_coordinates (np.ndarray): The camera coordinates.
+        camera_angles (np.ndarray): The camera angles.
+        predictor: The predictor object for image-based predictions.
+        closest_images: The closest images for each point in the point cloud.
+        true_labels (Optional): The true labels for the point cloud.
+
+    Methods:
+        predict: Predicts the labels for the point cloud.
+        predict_batch: Predicts the labels for a batch of points in the point cloud.
+        evaluate: Evaluates the predicted labels against the true labels.
+    """
+
     def __init__(
         self,
         point_cloud: o3d.geometry.PointCloud,
@@ -36,6 +70,17 @@ class PointCloudSegmentor:
         self.true_labels = true_labels
 
     def predict(self, batch_size, voting_images, drop_first):
+        """
+        Predicts the labels for the point cloud.
+
+        Args:
+            batch_size (int): The batch size for prediction.
+            voting_images: The number of voting images to consider.
+            drop_first: Whether to drop the first image in the closest images list.
+
+        Returns:
+            np.ndarray: The predicted labels for the point cloud.
+        """
         total_points = len(self.point_cloud.points)
         segmented = []
         for start_index in tqdm(
@@ -53,6 +98,18 @@ class PointCloudSegmentor:
         return result_labels.astype(np.int8)
 
     def predict_batch(self, start_idx, end_idx, voting_images, drop_first):
+        """
+        Predicts the labels for a batch of points in the point cloud.
+
+        Args:
+            start_idx (int): The start index of the batch.
+            end_idx (int): The end index of the batch.
+            voting_images: The number of voting images to consider.
+            drop_first: Whether to drop the first image in the closest images list.
+
+        Returns:
+            list: The predicted labels for the batch of points.
+        """
         labels = []
         projector = PointProjector(
             self.image_width,
@@ -91,6 +148,12 @@ class PointCloudSegmentor:
         return labels
 
     def evaluate(self, predicted_labels):
+        """
+        Evaluates the predicted labels against the true labels.
+
+        Args:
+            predicted_labels: The predicted labels for the point cloud.
+        """
         results = calculate_metrics(self.true_labels, predicted_labels)
         table_data = [
             (label, results["accuracies"][label + 1], results["ious"][label + 1])

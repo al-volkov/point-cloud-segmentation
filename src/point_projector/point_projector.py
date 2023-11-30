@@ -10,6 +10,33 @@ from src.point_projector.point_projector_core_vectorized import (
 
 
 class PointProjector:
+    """
+    Class for projecting 3D points onto 2D images.
+
+    Args:
+        image_width (int): The width of the image.
+        image_height (int): The height of the image.
+        vertical_offset (int): The vertical offset of the image.
+        points (np.ndarray): The array of 3D points to be projected.
+        camera_coordinates (np.ndarray): The array of camera coordinates.
+        camera_angles (np.ndarray): The array of camera angles.
+        vectorized (bool, optional):\
+            Whether to use vectorized projection. Defaults to True.
+
+    Attributes:
+        projector (Union[PointProjectorCore, PointProjectorCoreVectorized]):\
+            The point projector core.
+        points (np.ndarray): The array of 3D points.
+        camera_coordinates (np.ndarray): The array of camera coordinates.
+        camera_angles (np.ndarray): The array of camera angles.
+        projected_points (np.ndarray): The array of projected points.
+        valid_projection_mask (np.ndarray): The mask indicating valid projections.
+
+    Methods:
+        project_all: Projects all points onto the images.
+        project: Projects a specific point onto a specific image.
+    """
+
     __slots__ = (
         "projector",
         "points",
@@ -29,6 +56,19 @@ class PointProjector:
         camera_angles: np.ndarray,
         vectorized=True,
     ) -> None:
+        """
+        Initializes the PointProjector object.
+
+        Args:
+            image_width (int): The width of the image.
+            image_height (int): The height of the image.
+            vertical_offset (int): The vertical offset of the image.
+            points (np.ndarray): The array of 3D points to be projected.
+            camera_coordinates (np.ndarray): The array of camera coordinates.
+            camera_angles (np.ndarray): The array of camera angles.
+            vectorized (bool, optional):\
+                Whether to use vectorized projection. Defaults to True.
+        """
         if not vectorized:
             self.projector: Union[
                 PointProjectorCore, PointProjectorCoreVectorized
@@ -56,6 +96,17 @@ class PointProjector:
         camera_coordinates: np.ndarray,
         camera_angles: np.ndarray,
     ) -> np.ndarray:
+        """
+        Projects all points onto the images.
+
+        Args:
+            points (np.ndarray): The array of 3D points to be projected.
+            camera_coordinates (np.ndarray): The array of camera coordinates.
+            camera_angles (np.ndarray): The array of camera angles.
+
+        Returns:
+            np.ndarray: The array of projected points.
+        """
         projected_points = np.zeros((len(points), len(camera_coordinates), 2))
         for i, point in tqdm(
             enumerate(self.points),
@@ -73,6 +124,17 @@ class PointProjector:
         return projected_points
 
     def project(self, point_index: int, image_index: int) -> Optional[np.ndarray]:
+        """
+        Projects a specific point onto a specific image.
+
+        Args:
+            point_index (int): The index of the point to be projected.
+            image_index (int): The index of the image.
+
+        Returns:
+            Optional[np.ndarray]: The projected point,\
+                or None if projection is invalid.
+        """
         projection = self.projected_points[point_index, image_index]
         if projection[0] != -1:
             return projection
