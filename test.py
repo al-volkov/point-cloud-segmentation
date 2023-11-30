@@ -111,6 +111,6 @@ if __name__ == "__main__":
     if args.display:
         predicted_labels += 3
         num_labels = np.unique(predicted_labels).shape[0]
-        colors = plt.set_cmap("tab10")(predicted_labels / num_labels)[:, :3]
+        colors = plt.get_cmap("tab10")(predicted_labels / num_labels)[:, :3]  # type: ignore
         point_cloud.colors = o3d.utility.Vector3dVector(colors)
         o3d.visualization.draw_geometries([point_cloud])
