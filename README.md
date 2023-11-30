@@ -1,16 +1,19 @@
 # Point Cloud Segmentation
 
+
+
 ## Structure
 
 * `src`
-  * `image_loader` - Classes responsible for loading images
-  * `point_projector` - Classes responsible for projecting points onto a plane
-  * `predictor` - Classes responsible for predicting
-  * `utils`
-  * `point_cloud_segmentor.py` - Main class responsible for user interaction
-* `example_config.yaml`
-* `test.py` - Script for evaluation
-* `requirements.txt` - Alternative setup for dependencies
+  * `image_loader` - Classes for loading images.
+  * `point_projector` - Classes for projecting points onto a plane.
+  * `predictor` - Classes for making predictions.
+  * `utils` - Utility functions and classes.
+  * `point_cloud_segmentor.py` - Main class for user interaction.
+* `example_config.yaml` - Example configuration file.
+* `test.py` - Script for evaluation.
+* `requirements.txt` - Alternative setup for dependencies.
+* `environment.yml` - Environment setup file (for conda users).
 
 ## Usage
 
@@ -27,6 +30,7 @@ conda activate point-cloud-segmentation
 Alternatively, you can use requirements.txt to install Python dependencies:
 
 ```bash
+git clone https://github.com/al-volkov/point-cloud-segmentation.git
 pip install -r requirements.txt
 ```
 
@@ -36,7 +40,7 @@ If you plan to perform semantic segmentation of images on the fly, then you will
 
 ### 2 **Configure**
     
-You should create `.yaml` config with parameters.
+You should create `.yaml` config with parameters. See example_config.yaml for a template.
 
 ### 3 **Evaluate**
 ```
